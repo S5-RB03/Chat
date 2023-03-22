@@ -1,4 +1,4 @@
-package com.sevyh;
+package com.sevyh.Cassandra;
 
 import java.util.UUID;
 import java.util.Date;

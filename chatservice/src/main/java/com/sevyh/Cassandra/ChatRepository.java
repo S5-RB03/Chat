@@ -1,9 +1,12 @@
-package com.sevyh;
+package com.sevyh.Cassandra;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.cassandra.repository.CassandraRepository;
 
 public interface ChatRepository extends CassandraRepository<Chat, UUID> {
-    Chat findByCreatedAt(String createdAt);
+    Optional<Chat> findById(UUID id);
+
+    Iterable<Chat> findByMessage(String message);
 }

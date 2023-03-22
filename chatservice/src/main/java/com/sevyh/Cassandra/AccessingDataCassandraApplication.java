@@ -1,4 +1,4 @@
-package com.sevyh;
+package com.sevyh.Cassandra;
 
 import java.time.Instant;
 import java.util.Date;
@@ -16,7 +16,7 @@ public class AccessingDataCassandraApplication {
 
   private final static Logger log = LoggerFactory.getLogger(AccessingDataCassandraApplication.class);
   
-  public static void main(String[] args) {
+  public static void CassandraDemo(String[] args) {
     SpringApplication.run(AccessingDataCassandraApplication.class, args);
   }
   
@@ -31,11 +31,20 @@ public class AccessingDataCassandraApplication {
       Chat savedHello = chatRepository.save(hello);
       Chat savedWorld = chatRepository.save(world);
 
+
       chatRepository.findAll()
         .forEach(v -> log.info("Chat: {}", v.getMessage()));
       
       chatRepository.findById(savedHello.getId())
         .ifPresent(v -> log.info("Chat by id: {}", v.getMessage()));
+
+      if(savedWorld != null) {
+        log.info("Chat by message: {}", savedWorld.getMessage());
+      }
+      else {
+        log.info("Chat by message: {}", "null");
+      }
+
     };
   }
 }
