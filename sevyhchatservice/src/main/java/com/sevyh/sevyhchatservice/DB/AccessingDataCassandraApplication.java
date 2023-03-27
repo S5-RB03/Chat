@@ -10,11 +10,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 import com.sevyh.sevyhchatservice.Models.Chat;
 import com.sevyh.sevyhchatservice.Repositories.ChatRepository;
 
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.sevyh.sevyhchatservice"})
 public class AccessingDataCassandraApplication {
     
     private final static Logger log = LoggerFactory.getLogger(AccessingDataCassandraApplication.class);
