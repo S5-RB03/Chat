@@ -8,6 +8,7 @@ class SevyhchatserviceApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// No assertions needed - if the context loads successfully, the test will pass
 	}
 
 }
