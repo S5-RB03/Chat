@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.sevyh.sevyhchatservice.Models.Chat;
 import com.sevyh.sevyhchatservice.Repositories.ChatRepository;
@@ -23,6 +24,13 @@ public class AccessingDataCassandraApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(AccessingDataCassandraApplication.class, args);
+    }
+
+    //create a get request called /ping that returns a string "pong"
+
+    @GetMapping("/ping")
+    public String ping() {
+        return "pong";
     }
 
     @Bean

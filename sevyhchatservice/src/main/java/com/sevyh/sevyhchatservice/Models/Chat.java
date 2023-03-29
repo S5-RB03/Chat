@@ -3,6 +3,7 @@ package com.sevyh.sevyhchatservice.Models;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
@@ -11,8 +12,10 @@ public class Chat {
     @PrimaryKey
     private UUID id;
 
+    @Column("message")
     private String message;
 
+    @Column("created_at")
     private Date createdAt;
 
     public Chat(UUID id, String message, Date createdAt) {
