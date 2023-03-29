@@ -1,5 +1,7 @@
 package com.sevyh.sevyhchatservice.DB;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,9 @@ import com.datastax.oss.driver.api.core.CqlSession;
 @EnableCassandraRepositories(basePackages = "com.sevyh.sevyhchatservice.Repositories")
 public class CassandraConfig extends AbstractCassandraConfiguration {
 
+    private static final Logger logger = LoggerFactory.getLogger(CassandraConfig.class);
+
+
     @Value("${spring.cassandra.keyspace-name}")
     private String keySpace;
 
@@ -32,7 +37,8 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     }
 
     @Override
-    protected String getContactPoints() {
+    public String getContactPoints() {
+        logger.info("Contact Points: {}", contactPoints);
         return contactPoints;
     }
 
@@ -44,7 +50,7 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @Override
     public SchemaAction getSchemaAction() {
         return SchemaAction.CREATE_IF_NOT_EXISTS;
-    }
+    } 
 
     @Bean
     @Primary

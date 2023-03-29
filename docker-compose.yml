@@ -24,7 +24,7 @@ services:
     image: sevyh/chatservice:latest
     container_name: chatservice
     environment:
-      SPRING_DATA_CASSANDRA_CONTACT_POINTS: cassandra-chat
+      SPRING_CASSANDRA_CONTACT_POINTS: '192.168.160.2'
     ports:
       - "3001:3001"
     networks:
