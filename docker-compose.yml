@@ -24,7 +24,7 @@ services:
     image: sevyh/chatservice:latest
     container_name: chatservice
     environment:
-      SPRING_CASSANDRA_CONTACT_POINTS: '192.168.160.2'
+      SPRING_CASSANDRA_CONTACT_POINTS: 'host.docker.internal'
     ports:
       - "3001:3001"
     networks:
