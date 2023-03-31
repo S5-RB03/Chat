@@ -36,12 +36,18 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Start Cassandra container
+        run: docker run -d --name cassandra -p 9042:9042 cassandra
+
+      - name: Wait for Cassandra to start
+        run: sleep 60 # Wait for 1 minute before creating the keyspace
+
       - name: Initialize Cassandra schema
         run: |
           echo "CREATE KEYSPACE IF NOT EXISTS spring_cassandra WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 1 };" > schema.cql
           echo "CREATE TABLE IF NOT EXISTS spring_cassandra.chat(id UUID PRIMARY KEY, message TEXT, created_at TIMESTAMP);" >> schema.cql
           docker run --rm --network container:cassandra -v ${PWD}:/workspace -w /workspace --entrypoint=cqlsh cassandra -f schema.cql
-          sleep 20 # This delay ensures that the schema is fully initialized before running the tests.
+
 
       - name: Build and test
         env:
