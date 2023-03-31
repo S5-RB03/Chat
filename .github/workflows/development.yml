@@ -1,0 +1,56 @@
+name: Development Workflow
+
+on:
+  pull_request:
+    branches:
+      - Development
+  pull_request_review:
+    types:
+      - submitted
+
+jobs:
+  build_and_test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    services:
+      cassandra:
+        image: cassandra:latest
+        ports:
+          - 9042:9042
+        options: --name cassandra
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'adopt'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Initialize Cassandra schema
+        run: |
+          echo "CREATE KEYSPACE IF NOT EXISTS spring_cassandra WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 1 };" > schema.cql
+          echo "CREATE TABLE IF NOT EXISTS spring_cassandra.chat(id UUID PRIMARY KEY, message TEXT, created_at TIMESTAMP);" >> schema.cql
+          docker run --rm --network container:cassandra -v ${PWD}:/workspace -w /workspace --entrypoint=cqlsh cassandra -f schema.cql
+          sleep 20 # This delay ensures that the schema is fully initialized before running the tests.
+
+      - name: Build and test
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:cassandra://localhost:9042/spring_cassandra"
+        run: mvn -B clean verify
+
+      - name: Deploy
+        if: ${{ success() }}
+        run: |
+          # Add your deployment script here.
+          echo "Deployment steps go here"
