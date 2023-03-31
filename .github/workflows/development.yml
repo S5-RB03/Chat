@@ -37,7 +37,9 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Start Cassandra container
-        run: docker run -d --name cassandra -p 9042:9042 cassandra
+        run: |
+          docker rm -f cassandra || true
+          docker run -d --name cassandra -p 9042:9042 cassandra
 
       - name: Wait for Cassandra to start
         run: sleep 60 # Wait for 1 minute before creating the keyspace
