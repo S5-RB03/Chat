@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+
+  cassandra-chat:
+    image: cassandra:latest
+    container_name: cassandra-chat
+    networks:
+      - sevyh-network
+    ports:
+      - "9042:9042"
+    healthcheck:
+      test: ["CMD", "cqlsh", "--execute", "DESCRIBE KEYSPACES"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 120s
+    command: bash -c "echo 'Waiting for Cassandra to become available...' && cassandra -R && sleep 60 && echo 'Executing CQL command...' && cqlsh -f /docker-entrypoint-initdb.d/spring_cassandra_keyspace.cql ; while true ; do sleep 1 ; done"
+    volumes:
+    - ./cassandra-init:/docker-entrypoint-initdb.d
+
+
+  my-app:
+    image: sevyh/chatservice:latest
+    container_name: chatservice
+    environment:
+      SPRING_CASSANDRA_CONTACT_POINTS: 'host.docker.internal'
+    ports:
+      - "3001:3001"
+    networks:
+      - sevyh-network
+    depends_on:
+      cassandra-chat:
+        condition: service_healthy
+    restart: "on-failure"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:3001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  sevyh-network:
