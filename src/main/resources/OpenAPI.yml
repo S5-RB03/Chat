@@ -3,6 +3,9 @@ info:
   title: Chat App API - Messages Service
   description: API for a chat app that handles messages.
   version: 1.0.0
+servers:
+- url: localhost:3001/api/v1
+  description: Local server
 paths:
   /messages:
     post:
@@ -13,6 +16,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Message'
+            examples:
+              textMessage:
+                value:
+                  senderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                  receiverId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                  timestamp: "2023-04-12T23:20:50.52Z"
+                  messageType: "text"
+                  textContent: "Hello, how are you?"
       responses:
         201:
           description: Message sent successfully
@@ -23,27 +34,6 @@ paths:
         400:
           description: Invalid input
 
-  /messages/{messageId}:
-    get:
-      summary: Retrieve a specific message
-      parameters:
-        - name: messageId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        200:
-          description: Message retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-        404:
-          description: Message not found
-
-  /messages:
     get:
       summary: Retrieve paginated messages for a sender and receiver
       parameters:
@@ -53,24 +43,28 @@ paths:
           schema:
             type: string
             format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         - name: receiverId
           in: query
           required: true
           schema:
             type: string
             format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         - name: page
           in: query
           required: false
           schema:
             type: integer
             default: 1
+          example: 1
         - name: pageSize
           in: query
           required: false
           schema:
             type: integer
-            default: 10
+            default: 25
+          example: 25
       responses:
         200:
           description: Messages retrieved successfully
@@ -88,7 +82,6 @@ components:
     Message:
       type: object
       required:
-        - messageId
         - senderId
         - receiverId
         - timestamp
@@ -102,19 +95,24 @@ components:
           type: string
           format: uuid
           description: The ID of the user who sent the message
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         receiverId:
           type: string
           format: uuid
           description: The ID of the user who received the message
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         timestamp:
           type: string
           format: date-time
           description: The time when the message was sent
+          example: "2023-04-12T23:20:50.52Z"
         messageType:
           type: string
           enum: [text, photo, video]
           description: The type of message (text, photo, or video)
+          example: "text"
         textContent:
           type: string
           nullable: true
           description: The text content of the message (if applicable)
+          example: "Hello, how are you?"

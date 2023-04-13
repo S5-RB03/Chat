@@ -32,11 +32,11 @@ public class Message {
         this.messageType = messageType;
     }
 
-    public UUID getId() {
+    public UUID getMessageId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setMessageId(UUID id) {
         this.id = id;
     }
 
@@ -48,19 +48,19 @@ public class Message {
         this.textContent = textContent;
     }
 
-    public String getSender() {
+    public String getSenderId() {
         return senderId;
     }
 
-    public void setSender(String senderId) {
+    public void setSenderId(String senderId) {
         this.senderId = senderId;
     }
 
-    public String getReceiver() {
+    public String getReceiverId() {
         return receiverId;
     }
 
-    public void setReceiver(String reveiverId) {
+    public void setReceiverId(String reveiverId) {
         this.receiverId = reveiverId;
     }
 
