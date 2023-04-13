@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SevyhchatserviceApplication {
 
-	public static void notMain(String[] args) {
+	public static void Main(String[] args) {
 		SpringApplication.run(SevyhchatserviceApplication.class, args);
 	}
 
