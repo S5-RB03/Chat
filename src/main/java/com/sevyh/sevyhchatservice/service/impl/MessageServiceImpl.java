@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sevyh.sevyhchatservice.api.model.Message;
+import com.sevyh.sevyhchatservice.repository.MessageRepository;
 import com.sevyh.sevyhchatservice.service.MessageService;
 
 @Service
@@ -15,9 +17,17 @@ public class MessageServiceImpl implements MessageService {
 
     private final List<Message> messages = new ArrayList<>();
 
+    @Autowired
+    private MessageRepository messageRepository;
+
     @Override
     public Message saveMessage(Message message) {
-        messages.add(message);
+
+        // generate a random UUID for the message
+        message.setMessageId(UUID.randomUUID());
+
+        // save the message to the database
+        messageRepository.save(message);
         return message;
     }
 
