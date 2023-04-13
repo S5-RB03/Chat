@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: Chat App API - Messages Service
+  description: API for a chat app that handles messages.
+  version: 1.0.0
+paths:
+  /messages:
+    post:
+      summary: Send a new message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        201:
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        400:
+          description: Invalid input
+
+  /messages/{messageId}:
+    get:
+      summary: Retrieve a specific message
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Message retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        404:
+          description: Message not found
+
+  /messages:
+    get:
+      summary: Retrieve paginated messages for a sender and receiver
+      parameters:
+        - name: senderId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: receiverId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: Messages retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        400:
+          description: Invalid input
+
+components:
+  schemas:
+    Message:
+      type: object
+      required:
+        - messageId
+        - senderId
+        - receiverId
+        - timestamp
+        - messageType
+      properties:
+        messageId:
+          type: string
+          format: uuid
+          description: A unique identifier for the message
+        senderId:
+          type: string
+          format: uuid
+          description: The ID of the user who sent the message
+        receiverId:
+          type: string
+          format: uuid
+          description: The ID of the user who received the message
+        timestamp:
+          type: string
+          format: date-time
+          description: The time when the message was sent
+        messageType:
+          type: string
+          enum: [text, photo, video]
+          description: The type of message (text, photo, or video)
+        textContent:
+          type: string
+          nullable: true
+          description: The text content of the message (if applicable)
