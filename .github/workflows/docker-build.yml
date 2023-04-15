@@ -67,6 +67,6 @@ jobs:
         if: ${{ success() }} # Add this line
         uses: docker/build-push-action@v2
         with:
-          context: sevyhchatservice
+          context: .
           push: true
           tags: jjuless/sevyhchatservice:latest
