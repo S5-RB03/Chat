@@ -52,14 +52,17 @@ Schakel over naar de nieuw gemaakte keyspace door uit te voeren:
 
 Maak nu de `messages`-tabel met het volgende commando:
 
-`CREATE TABLE messages (
-    messageId UUID PRIMARY KEY,
+`CREATE TABLE IF NOT EXISTS messages (
+    conversation_id UUID,
     senderId UUID,
     receiverId UUID,
+    messageId UUID,
     timestamp timestamp,
     messageType text,
-    textContent text
-);`
+    textContent text,
+    PRIMARY KEY (conversation_id, timestamp)
+) WITH CLUSTERING ORDER BY (timestamp DESC);
+`
 
 #### Stap 6: Verlaat cqlsh en controleer of de container draait
 

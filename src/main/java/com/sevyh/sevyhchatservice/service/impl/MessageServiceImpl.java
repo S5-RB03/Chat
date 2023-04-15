@@ -1,11 +1,15 @@
 package com.sevyh.sevyhchatservice.service.impl;
 
+import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sevyh.sevyhchatservice.api.model.Message;
@@ -26,8 +30,16 @@ public class MessageServiceImpl implements MessageService {
         // generate a random UUID for the message
         message.setMessageId(UUID.randomUUID());
 
+        // generate a conversation ID based on the sender and receiver IDs
+        UUID conversationId = generateConversationId(message.getSenderId(), message.getReceiverId());
+        message.setConversationId(conversationId);
+
+        message.setTimestamp(Instant.now());
+
         // save the message to the database
         messageRepository.save(message);
+
+
         return message;
     }
 
@@ -41,12 +53,32 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> getPaginatedMessages(UUID senderId, UUID receiverId, int page, int pageSize) {
-        return messages.stream()
-                .filter(message -> (message.getSenderId().equals(senderId) && message.getReceiverId().equals(receiverId))
-                        || (message.getSenderId().equals(receiverId) && message.getReceiverId().equals(senderId)))
-                .sorted((m1, m2) -> m2.getTimestamp().compareTo(m1.getTimestamp())) // Newest messages first
-                .skip((page - 1) * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
+        PageRequest pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.DESC, "timestamp"));
+        UUID conversationId = generateConversationId(senderId, receiverId);
+        return messageRepository.findPaginatedMessages(conversationId, pageable);
     }
+
+    private UUID generateConversationId(UUID senderId, UUID receiverId) {
+        ByteBuffer buffer = ByteBuffer.allocate(32);
+        
+        UUID firstId, secondId;
+        if (senderId.compareTo(receiverId) < 0) {
+            firstId = senderId;
+            secondId = receiverId;
+        } else {
+            firstId = receiverId;
+            secondId = senderId;
+        }
+    
+        buffer.putLong(firstId.getMostSignificantBits());
+        buffer.putLong(firstId.getLeastSignificantBits());
+        buffer.putLong(secondId.getMostSignificantBits());
+        buffer.putLong(secondId.getLeastSignificantBits());
+    
+        byte[] combinedBytes = buffer.array();
+        UUID conversationId = UUID.nameUUIDFromBytes(combinedBytes);
+        return conversationId;
+    }
+    
+
 }
