@@ -41,17 +41,16 @@ jobs:
 
       - name: Initialize Cassandra schema
         run: |
-          echo "CREATE KEYSPACE IF NOT EXISTS spring_cassandra WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 1 };" > schema.cql
-          echo "CREATE TABLE IF NOT EXISTS spring_cassandra.chat(id UUID PRIMARY KEY, message TEXT, created_at TIMESTAMP);" >> schema.cql
+          echo "CREATE KEYSPACE chatmessages_keyspace WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};" > schema.cql
+          echo "USE chatmessages_keyspace;" >> schema.cql
+          echo "CREATE TABLE IF NOT EXISTS messages ( conversation_id UUID, senderId UUID, receiverId UUID, messageId UUID, timestamp timestamp, messageType text, textContent text, PRIMARY KEY (conversation_id, timestamp) ) WITH CLUSTERING ORDER BY (timestamp DESC);" >> schema.cql
           docker run --rm --network container:cassandra -v ${PWD}:/workspace -w /workspace --entrypoint=cqlsh cassandra -f schema.cql
 
 
       - name: Build and test
         env:
-          SPRING_DATASOURCE_URL: "jdbc:cassandra://localhost:9042/spring_cassandra"
-        run: |
-          cd sevyhchatservice
-          mvn -B clean verify
+          SPRING_DATASOURCE_URL: "jdbc:cassandra://localhost:9042/chatmessages_keyspace"
+        run: mvn -B clean verify
       
       - name: Set up Docker Buildx
         if: ${{ success() }} # Add this line
