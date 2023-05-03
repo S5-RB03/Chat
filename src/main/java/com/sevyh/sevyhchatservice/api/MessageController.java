@@ -3,6 +3,7 @@ package com.sevyh.sevyhchatservice.api;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,9 @@ import com.sevyh.sevyhchatservice.api.model.ApiResponse;
 import com.sevyh.sevyhchatservice.api.model.Message;
 import com.sevyh.sevyhchatservice.service.MessageService;
 
+
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v1/chat")
 public class MessageController {
 
