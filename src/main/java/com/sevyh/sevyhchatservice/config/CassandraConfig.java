@@ -1,21 +1,26 @@
 package com.sevyh.sevyhchatservice.config;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.cassandra.core.CassandraOperations;
-import org.springframework.data.cassandra.core.CassandraTemplate;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+
+import jakarta.annotation.PostConstruct;
 
 @Configuration
 public class CassandraConfig {
 
+    @Value("${spring.cassandra.keyspace-name}")
+    private String keyspaceName;
+
     @Autowired
-    private CqlSession cqlSession;
+    private CqlSession session;
 
-    @Bean
-    public CassandraOperations cassandraTemplate() {
-        return new CassandraTemplate(cqlSession);
+    @PostConstruct
+    public void createKeyspace() {
+        String query = "CREATE KEYSPACE IF NOT EXISTS " + keyspaceName +
+                       " WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};";
+        session.execute(query);
     }
-
 }
