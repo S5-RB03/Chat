@@ -33,11 +33,12 @@ public class MessageRepositoryTest {
         UUID conversationId = UUID.randomUUID();
         UUID senderId = UUID.randomUUID();
         UUID receiverId = UUID.randomUUID();
+        String id = "id";
 
         // Prepare some messages
         List<Message> messages = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            messages.add(new Message(UUID.randomUUID(), conversationId, "Message " + i, senderId, receiverId, Instant.now(), MessageType.TEXT));
+            messages.add(new Message(id, conversationId, "Message " + i, senderId, receiverId, Instant.now(), MessageType.TEXT));
         }
 
         // Mock the repository behavior

@@ -11,7 +11,7 @@ import org.springframework.data.cassandra.core.mapping.Table;
 public class Message {
 
     @PrimaryKey(value = "messageid")
-    private UUID id;
+    private String id;
     @Column("conversation_id")
     private UUID conversationId; 
     @Column("textcontent")
@@ -28,12 +28,12 @@ public class Message {
     public Message() {
     }
 
-    public Message(UUID id, UUID conversationId, UUID senderId, UUID receiverId, Instant timestamp, MessageType messageType) {
+    public Message(String id, UUID conversationId, UUID senderId, UUID receiverId, Instant timestamp, MessageType messageType) {
         this(id, conversationId, null, senderId, receiverId, timestamp, messageType);
     }
 
 
-    public Message(UUID id, UUID conversationId, String textContent, UUID senderId, UUID receiverId, Instant timestamp, MessageType messageType) {
+    public Message(String id, UUID conversationId, String textContent, UUID senderId, UUID receiverId, Instant timestamp, MessageType messageType) {
         this.id = id;
         this.conversationId = conversationId;
         this.textContent = textContent;
@@ -43,11 +43,11 @@ public class Message {
         this.messageType = messageType;
     }
 
-    public UUID getMessageId() {
+    public String getId() {
         return id;
     }
 
-    public void setMessageId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

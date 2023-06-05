@@ -26,9 +26,6 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message saveMessage(Message message) {
 
-        // generate a random UUID for the message
-        message.setMessageId(UUID.randomUUID());
-
         // generate a conversation ID based on the sender and receiver IDs
         UUID conversationId = generateConversationId(message.getSenderId(), message.getReceiverId());
         message.setConversationId(conversationId);
@@ -45,7 +42,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message getMessageById(UUID messageId) {
         return messages.stream()
-                .filter(message -> message.getMessageId().equals(messageId))
+                .filter(message -> message.getId().equals(messageId))
                 .findFirst()
                 .orElse(null);
     }
