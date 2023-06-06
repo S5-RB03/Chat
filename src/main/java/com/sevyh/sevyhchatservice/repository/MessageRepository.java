@@ -8,9 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
 import com.sevyh.sevyhchatservice.api.model.Message;
+import com.sevyh.sevyhchatservice.api.model.MessageKey;
 
 
-public interface MessageRepository extends CassandraRepository<Message, UUID> {
+public interface MessageRepository extends CassandraRepository<Message, MessageKey> {
     Message getMessageById(UUID messageId);
 
     @Query("SELECT * FROM messages WHERE conversation_id = :conversation_id")

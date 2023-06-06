@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sevyh.sevyhchatservice.api.model.Message;
+import com.sevyh.sevyhchatservice.api.model.MessageKey;
 import com.sevyh.sevyhchatservice.messaging.RabbitMQSender;
 import com.sevyh.sevyhchatservice.repository.MessageRepository;
 import com.sevyh.sevyhchatservice.service.MessageService;
@@ -30,14 +31,21 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message saveMessage(Message message) {
         // generate a conversation ID based on the sender and receiver IDs
-        UUID conversationId = generateConversationId(message.getSenderId(), message.getReceiverId());
-        message.setConversationId(conversationId);
-        message.setTimestamp(new Timestamp(System.currentTimeMillis()));
-    
-        // Save the message to the database
-        messageRepository.save(message);
-    
-        return message;
+    UUID conversationId = generateConversationId(message.getSenderId(), message.getReceiverId());
+
+    // generate a timestamp
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+    // Create a new MessageKey
+    MessageKey messageKey = new MessageKey(conversationId, timestamp);
+
+    // Set the MessageKey in the message
+    message.setKey(messageKey);
+
+    // Save the message to the database
+    messageRepository.save(message);
+
+    return message;
     }
     
     // in the part of your code that handles the HTTP request to send a message

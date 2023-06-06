@@ -10,53 +10,58 @@ import org.springframework.data.cassandra.core.mapping.Table;
 @Table("messages")
 public class Message {
 
-    @PrimaryKey(value = "messageid")
-    private String id;
-    @Column("conversation_id")
-    private UUID conversationId; 
+    @PrimaryKey
+    private MessageKey key;
+
+    @Column("messageid")
+    private String messageId;
+    
     @Column("textcontent")
     private String textContent;
+    
     @Column("senderid")
     private UUID senderId;
+    
     @Column("receiverid")
     private UUID receiverId;
-    @Column("timestamp")
-    private Timestamp timestamp;
+    
     @Column("messagetype")
     private MessageType messageType;
+
+    // Constructors
+
+    public MessageKey getKey() {
+        return key;
+    }
+
+    public void setKey(MessageKey key) {
+        this.key = key;
+    }
 
     public Message() {
     }
 
-    public Message(String id, UUID conversationId, UUID senderId, UUID receiverId, Timestamp timestamp, MessageType messageType) {
-        this(id, conversationId, null, senderId, receiverId, timestamp, messageType);
+    public Message(String messageId, UUID conversationId, UUID senderId, UUID receiverId, Timestamp timestamp, MessageType messageType) {
+        this(messageId, conversationId, null, senderId, receiverId, timestamp, messageType);
     }
 
 
-    public Message(String id, UUID conversationId, String textContent, UUID senderId, UUID receiverId, Timestamp timestamp, MessageType messageType) {
-        this.id = id;
-        this.conversationId = conversationId;
+    public Message(String messageId, UUID conversationId, String textContent, UUID senderId, UUID receiverId, Timestamp timestamp, MessageType messageType) {
+        this.messageId = messageId;
         this.textContent = textContent;
         this.senderId = senderId;
         this.receiverId = receiverId;
-        this.timestamp = timestamp;
         this.messageType = messageType;
+        this.key = new MessageKey(conversationId, timestamp);
     }
+    
 
     public String getId() {
-        return id;
+        return messageId;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public UUID getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(UUID conversationId) {
-        this.conversationId = conversationId;
+    public void setId(String messageId) {
+        this.messageId = messageId;
     }
 
     public String getTextContent() {
@@ -83,14 +88,6 @@ public class Message {
         this.receiverId = reveiverId;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public MessageType getMessageType() {
         return messageType;
     }
@@ -101,12 +98,12 @@ public class Message {
     @Override
     public String toString() {
         return "Message{" +
-                "id='" + id + '\'' +
-                ", conversationId='" + conversationId + '\'' +
+                "id='" + messageId + '\'' +
+                ", conversationId='" + this.key.getConversationId() + '\'' +
                 ", textContent='" + textContent + '\'' +
                 ", senderId='" + senderId + '\'' +
                 ", receiverId='" + receiverId + '\'' +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + this.key.getTimestamp() +
                 ", messageType='" + messageType + '\'' +
                 '}';
     }
