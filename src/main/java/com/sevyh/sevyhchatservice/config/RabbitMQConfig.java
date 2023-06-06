@@ -14,28 +14,52 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.queue}")
-    private String queueName;
+    @Value("${rabbitmq.storage.queue}")
+    private String storageQueueName;
 
-    @Value("${rabbitmq.exchange}")
-    private String exchangeName;
+    @Value("${rabbitmq.storage.exchange}")
+    private String storageExchangeName;
 
-    @Value("${rabbitmq.routingKey}")
-    private String routingKey;
+    @Value("${rabbitmq.storage.routingKey}")
+    private String storageRoutingKey;
+
+    @Value("${rabbitmq.communication.queue}")
+    private String communicationQueueName;
+
+    @Value("${rabbitmq.communication.exchange}")
+    private String communicationExchangeName;
+
+    @Value("${rabbitmq.communication.routingKey}")
+    private String communicationRoutingKey;
 
     @Bean
-    public Queue queue() {
-        return new Queue(queueName, true);
+    public Queue storageQueue() {
+        return new Queue(storageQueueName, true);
     }
 
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(exchangeName);
+    public Queue communicationQueue() {
+        return new Queue(communicationQueueName, true);
     }
 
     @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
+    public TopicExchange storageExchange() {
+        return new TopicExchange(storageExchangeName);
+    }
+
+    @Bean
+    public TopicExchange communicationExchange() {
+        return new TopicExchange(communicationExchangeName);
+    }
+
+    @Bean
+    public Binding storageBinding(Queue storageQueue, TopicExchange storageExchange) {
+        return BindingBuilder.bind(storageQueue).to(storageExchange).with(storageRoutingKey);
+    }
+
+    @Bean
+    public Binding communicationBinding(Queue communicationQueue, TopicExchange communicationExchange) {
+        return BindingBuilder.bind(communicationQueue).to(communicationExchange).with(communicationRoutingKey);
     }
 
     @Bean
@@ -50,3 +74,4 @@ public class RabbitMQConfig {
         return new Jackson2JsonMessageConverter();
     }
 }
+
