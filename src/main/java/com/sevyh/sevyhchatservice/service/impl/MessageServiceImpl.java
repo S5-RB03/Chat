@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sevyh.sevyhchatservice.api.model.Message;
+import com.sevyh.sevyhchatservice.api.model.MessageDto;
 import com.sevyh.sevyhchatservice.api.model.MessageKey;
 import com.sevyh.sevyhchatservice.messaging.RabbitMQSender;
 import com.sevyh.sevyhchatservice.repository.MessageRepository;
@@ -30,31 +31,41 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message saveMessage(Message message) {
-        // generate a conversation ID based on the sender and receiver IDs
-    UUID conversationId = generateConversationId(message.getSenderId(), message.getReceiverId());
-
-    // generate a timestamp
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-    // Create a new MessageKey
-    MessageKey messageKey = new MessageKey(conversationId, timestamp);
-
-    // Set the MessageKey in the message
-    message.setKey(messageKey);
-
-    // Save the message to the database
-    messageRepository.save(message);
-
-    return message;
+        // Save the message to the database
+        messageRepository.save(message);
+    
+        return message;
     }
     
-    // in the part of your code that handles the HTTP request to send a message
-    public void sendMessage(Message message) {
+    public Message sendMessage(MessageDto messageDto) {
+        // Create the Message from the MessageDto
+        Message message = new Message();
+        message.setId(messageDto.getId());
+        message.setTextContent(messageDto.getTextContent());
+        message.setSenderId(messageDto.getSenderId());
+        message.setReceiverId(messageDto.getReceiverId());
+        message.setMessageType(messageDto.getMessageType());
+    
+        // generate a conversation ID based on the sender and receiver IDs
+        UUID conversationId = generateConversationId(message.getSenderId(), message.getReceiverId());
+    
+        // generate a timestamp
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    
+        // Create a new MessageKey
+        MessageKey messageKey = new MessageKey(conversationId, timestamp);
+    
+        // Set the MessageKey in the message
+        message.setKey(messageKey);
+    
         Message savedMessage = this.saveMessage(message);
     
         // Publish the message to RabbitMQ after it has been saved
         rabbitMQSender.sendToStorage(savedMessage);
+    
+        return savedMessage;
     }
+    
 
     @Override
     public Message getMessageById(UUID messageId) {
