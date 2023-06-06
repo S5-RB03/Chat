@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +38,7 @@ public class MessageRepositoryTest {
         // Prepare some messages
         List<Message> messages = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            messages.add(new Message(id, conversationId, "Message " + i, senderId, receiverId, Instant.now(), MessageType.TEXT));
+            messages.add(new Message(id, conversationId, "Message " + i, senderId, receiverId, new Timestamp(System.currentTimeMillis()), MessageType.TEXT));
         }
 
         // Mock the repository behavior

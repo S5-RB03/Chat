@@ -1,7 +1,7 @@
 package com.sevyh.sevyhchatservice.service.impl;
 
 import java.nio.ByteBuffer;
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sevyh.sevyhchatservice.api.model.Message;
+import com.sevyh.sevyhchatservice.messaging.RabbitMQSender;
 import com.sevyh.sevyhchatservice.repository.MessageRepository;
 import com.sevyh.sevyhchatservice.service.MessageService;
 
@@ -23,20 +24,28 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
+
     @Override
     public Message saveMessage(Message message) {
-
         // generate a conversation ID based on the sender and receiver IDs
         UUID conversationId = generateConversationId(message.getSenderId(), message.getReceiverId());
         message.setConversationId(conversationId);
-
-        message.setTimestamp(Instant.now());
-
-        // save the message to the database
+        message.setTimestamp(new Timestamp(System.currentTimeMillis()));
+    
+        // Save the message to the database
         messageRepository.save(message);
-
-
+    
         return message;
+    }
+    
+    // in the part of your code that handles the HTTP request to send a message
+    public void sendMessage(Message message) {
+        Message savedMessage = this.saveMessage(message);
+    
+        // Publish the message to RabbitMQ after it has been saved
+        rabbitMQSender.sendToStorage(savedMessage);
     }
 
     @Override

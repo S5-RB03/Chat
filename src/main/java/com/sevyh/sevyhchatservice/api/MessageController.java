@@ -41,7 +41,7 @@ public class MessageController {
 
     @PostMapping("/message")
     public ApiResponse<Message> postChatMessage(@RequestBody Message message) {
-        messageService.saveMessage(message);
+        messageService.sendMessage(message);
 
         ApiResponse<Message> response = new ApiResponse<>(true, "Chat message posted successfully", message);
 
