@@ -20,16 +20,29 @@ public class RabbitMQReceiver {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @RabbitListener(queues = "${rabbitmq.queue}")
-    public void receive(byte[] payload) {
-        System.out.println("Received message: " + payload);
+    @RabbitListener(queues = "${rabbitmq.storage.queue}")
+    public void receiveForStorage(byte[] payload) {
+        // process messages for storage
+        processMessage(payload);
+    }
+    
+    @RabbitListener(queues = "${rabbitmq.communication.queue}")
+    public void receiveForCommunication(byte[] payload) {
+        // process messages for communication
+        processMessage(payload);
+    }
 
+    private void processMessage(byte[] payload) {
+        System.out.println("Received message: " + new String(payload));
+    
         try {
-            Message savedMessage = messageService.saveMessage(objectMapper.readValue(payload, Message.class));
+            Message message = objectMapper.readValue(new String(payload), Message.class);
+            Message savedMessage = messageService.saveMessage(message);
             System.out.println("Saved message: " + savedMessage);
         } catch (IOException e) {
             System.out.println("Error while parsing message: " + e.getMessage());
         }
-        
     }
+    
 }
+

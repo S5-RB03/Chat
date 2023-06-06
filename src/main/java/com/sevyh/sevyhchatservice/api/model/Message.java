@@ -1,6 +1,6 @@
 package com.sevyh.sevyhchatservice.api.model;
 
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import org.springframework.data.cassandra.core.mapping.Column;
@@ -21,19 +21,19 @@ public class Message {
     @Column("receiverid")
     private UUID receiverId;
     @Column("timestamp")
-    private Instant timestamp;
+    private Timestamp timestamp;
     @Column("messagetype")
     private MessageType messageType;
 
     public Message() {
     }
 
-    public Message(String id, UUID conversationId, UUID senderId, UUID receiverId, Instant timestamp, MessageType messageType) {
+    public Message(String id, UUID conversationId, UUID senderId, UUID receiverId, Timestamp timestamp, MessageType messageType) {
         this(id, conversationId, null, senderId, receiverId, timestamp, messageType);
     }
 
 
-    public Message(String id, UUID conversationId, String textContent, UUID senderId, UUID receiverId, Instant timestamp, MessageType messageType) {
+    public Message(String id, UUID conversationId, String textContent, UUID senderId, UUID receiverId, Timestamp timestamp, MessageType messageType) {
         this.id = id;
         this.conversationId = conversationId;
         this.textContent = textContent;
@@ -83,11 +83,11 @@ public class Message {
         this.receiverId = reveiverId;
     }
 
-    public Instant getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -98,4 +98,17 @@ public class Message {
     public void setMessageType(MessageType messageType) {
         this.messageType = messageType;
     }
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id='" + id + '\'' +
+                ", conversationId='" + conversationId + '\'' +
+                ", textContent='" + textContent + '\'' +
+                ", senderId='" + senderId + '\'' +
+                ", receiverId='" + receiverId + '\'' +
+                ", timestamp=" + timestamp +
+                ", messageType='" + messageType + '\'' +
+                '}';
+    }
+
 }

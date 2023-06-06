@@ -12,13 +12,23 @@ public class RabbitMQSender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Value("${rabbitmq.exchange}")
-    private String exchange;
+    @Value("${rabbitmq.storage.exchange}")
+    private String storageExchange;
 
-    @Value("${rabbitmq.routingKey}")
-    private String routingKey;
+    @Value("${rabbitmq.storage.routingKey}")
+    private String storageRoutingKey;
+    
+    @Value("${rabbitmq.communication.exchange}")
+    private String communicationExchange;
 
-    public void send(Object message) {
-        rabbitTemplate.convertAndSend(exchange, routingKey, message);
+    @Value("${rabbitmq.communication.routingKey}")
+    private String communicationRoutingKey;
+
+    public void sendToStorage(Object message) {
+        rabbitTemplate.convertAndSend(storageExchange, storageRoutingKey, message);
+    }
+    
+    public void sendForCommunication(Object message) {
+        rabbitTemplate.convertAndSend(communicationExchange, communicationRoutingKey, message);
     }
 }
