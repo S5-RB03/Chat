@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sevyh.sevyhchatservice.api.model.ApiResponse;
 import com.sevyh.sevyhchatservice.api.model.Message;
+import com.sevyh.sevyhchatservice.api.model.MessageDto;
 import com.sevyh.sevyhchatservice.service.MessageService;
 
 
@@ -40,8 +41,8 @@ public class MessageController {
     }
 
     @PostMapping("/message")
-    public ApiResponse<Message> postChatMessage(@RequestBody Message message) {
-        messageService.sendMessage(message);
+    public ApiResponse<Message> postChatMessage(@RequestBody MessageDto messageDto) {
+        Message message = messageService.sendMessage(messageDto);
 
         ApiResponse<Message> response = new ApiResponse<>(true, "Chat message posted successfully", message);
 

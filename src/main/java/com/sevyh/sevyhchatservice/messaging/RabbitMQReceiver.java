@@ -9,13 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevyh.sevyhchatservice.api.model.Message;
-import com.sevyh.sevyhchatservice.service.MessageService;
 
 @Service
 public class RabbitMQReceiver {
-
-    @Autowired
-    private MessageService messageService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -34,15 +30,15 @@ public class RabbitMQReceiver {
 
     private void processMessage(byte[] payload) {
         System.out.println("Received message: " + new String(payload));
-    
+        
         try {
             Message message = objectMapper.readValue(new String(payload), Message.class);
-            Message savedMessage = messageService.saveMessage(message);
-            System.out.println("Saved message: " + savedMessage);
+            System.out.println("Received message: " + message);
         } catch (IOException e) {
             System.out.println("Error while parsing message: " + e.getMessage());
         }
     }
+    
     
 }
 
